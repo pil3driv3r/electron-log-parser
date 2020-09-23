@@ -1,0 +1,50 @@
+{
+  "defaultConfiguration": [
+    {
+      "key": "@timestamp",
+      "label": "Timestamp",
+      "dataType": "date",
+      "enableVisualizer":false,
+      "allowFiltering": true
+    },
+    {
+      "key": "message",
+      "label": "Message",
+      "dataType": "string",
+      "enableVisualizer": true,
+      "allowFiltering": true
+    },
+    {
+      "key": "level",
+      "label": "Level",
+      "dataType": "string",
+      "filterType": "set",
+      "enableVisualizer": false,
+      "allowFiltering": true
+    },
+    {
+      "key": "logger_name",
+      "label": "Logger",
+      "dataType": "string",
+      "filterType": "set",
+      "enableVisualizer": false,
+      "allowFiltering": true
+    },
+    {
+      "key": "kioskSecondaryLoggingSource",
+      "label": "Source device",
+      "dataType": "string",
+      "filterType": "set",
+      "enableVisualizer": false,
+      "allowFiltering": true
+    },
+    {
+      "key": "HOSTNAME",
+      "label": "HOSTNAME",
+      "dataType": "string",
+      "filterType": "set",
+      "enableVisualizer": false,
+      "allowFiltering": false
+    }
+  ]
+}
