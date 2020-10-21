@@ -2,8 +2,10 @@
   "defaultConfiguration": [
     {
       "key": "@timestamp",
+      "alias": "timestamp",
       "label": "Timestamp",
       "dataType": "date",
+      "filterType": "date",
       "enableVisualizer":false,
       "allowFiltering": true
     },
@@ -11,6 +13,7 @@
       "key": "message",
       "label": "Message",
       "dataType": "string",
+      "filterType": "search",
       "enableVisualizer": true,
       "allowFiltering": true
     },

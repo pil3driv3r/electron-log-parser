@@ -1,16 +1,20 @@
-import React, { useReducer } from 'react';
+import React, { useReducer } from 'react'
 import CompositionRoot from './components/CompositionRoot'
 
-import {appContext, initialState, reducer} from './contextProviders/appContextProvider';
+import {
+  appContext,
+  initialState,
+  reducer
+} from './providers/appContextProvider'
 
-function App() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+function App () {
+  const [state, dispatch] = useReducer(reducer, initialState)
 
- return (
-  <appContext.Provider value = {{state, dispatch}}>
-    <CompositionRoot/>;
-  </appContext.Provider>
- );
+  return (
+    <appContext.Provider value={{ state, dispatch }}>
+      <CompositionRoot />
+    </appContext.Provider>
+  )
 }
 
-export default App;
+export default App
