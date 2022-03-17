@@ -1,33 +1,33 @@
-import { defaultConfiguration } from '../configurations/fieldConfiguration.json'
-import { parse, compareDesc } from 'date-fns'
+import { defaultConfiguration } from "../configurations/fieldConfiguration.json";
+import { parse, compareDesc, compareAsc } from "date-fns";
 
 export const processFileAsChunks = (
   fileContent,
   filterConfiguration = defaultConfiguration
 ) => {
-  let splitRegex = /\n/
-  let chunks = fileContent.split(splitRegex)
-  let filterDataSet = {}
-  let formattedChunks = []
-  chunks.forEach(chunk => {
+  let splitRegex = /\n/;
+  let chunks = fileContent.split(splitRegex);
+  let filterDataSet = {};
+  let formattedChunks = [];
+  chunks.forEach((chunk) => {
     try {
-      let parsedChunk = JSON.parse(chunk)
+      let parsedChunk = JSON.parse(chunk);
       filterDataSet = buildFiltersForChunk(
         parsedChunk,
         filterConfiguration,
         filterDataSet
-      )
-      formattedChunks.push(parsedChunk)
+      );
+      formattedChunks.push(parsedChunk);
     } catch (ex) {
-      return chunk
+      return chunk;
     }
-  })
-  console.log(filterDataSet)
+  });
+  console.log(filterDataSet);
   return {
     chunkedData: formattedChunks.slice(0, formattedChunks.length - 1),
-    filterDataSet
-  }
-}
+    filterDataSet,
+  };
+};
 
 const buildFiltersForChunk = (
   chunk,
@@ -38,42 +38,44 @@ const buildFiltersForChunk = (
     filterConfiguration.forEach(
       ({ key, alias, filterType, allowFiltering }) => {
         if (!chunk.hasOwnProperty(key) && chunk.hasOwnProperty(alias))
-          key = alias
+          key = alias;
         if (allowFiltering) {
           switch (filterType) {
             case FilterTypes.SET: {
               if (!filterDataSet[key]) {
-                filterDataSet[key] = new Set()
+                filterDataSet[key] = new Set();
               }
-              filterDataSet[key].add(chunk[key])
+              filterDataSet[key].add(chunk[key]);
+              break;
             }
             case FilterTypes.DATE: {
-              let formatString = 'yyyy-MM-dd HH:mm:ss,SSS' //"2020-08-30 00:03:30,321";
-              let parsedDate = parse(chunk[key], formatString, new Date())
+              let formatString = "yyyy-MM-dd HH:mm:ss,SSS"; //"2020-08-30 00:03:30,321";
+              let parsedDate = parse(chunk[key], formatString, new Date());
               if (!filterDataSet[key]) {
-                filterDataSet[key] = {}
-                filterDataSet[key].min = parsedDate
-                filterDataSet[key].max = parsedDate
+                filterDataSet[key] = {};
+                filterDataSet[key].min = parsedDate;
+                filterDataSet[key].max = parsedDate;
               }
-              if (compareDesc(filterDataSet[key].min, parsedDate) === 1) {
-                filterDataSet[key].min = parsedDate
+              if (compareAsc(filterDataSet[key].min, parsedDate) === 1) {
+                filterDataSet[key].min = parsedDate;
               }
-              if (compareDesc(parsedDate, filterDataSet[key].max) === 1) {
-                filterDataSet[key].max = parsedDate
+              if (compareDesc(filterDataSet[key].max, parsedDate) === 1) {
+                filterDataSet[key].max = parsedDate;
               }
+              break;
             }
           }
         }
       }
-    )
+    );
   } catch (ex) {
-    console.log(ex)
+    console.log(ex);
   }
-  return filterDataSet
-}
+  return filterDataSet;
+};
 
 const FilterTypes = {
-  STRING: 'string',
-  DATE: 'date',
-  SET: 'set'
-}
+  STRING: "string",
+  DATE: "date",
+  SET: "set",
+};

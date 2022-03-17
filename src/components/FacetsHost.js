@@ -25,13 +25,23 @@ function getFilterFields (fieldConfiguration) {
 }
 
 const Filter = props => {
-  let config = props.field
+  let config = props.field;
+  let element;
+  switch (props.type) {
+    case "date": {
+      return (<DateTimeFilter {...props}/>);
+    }
+    default:{
+      return (<div>{props.label}</div>);
+      break;
+    }
+  }
 }
 
 const DateTimeFilter = props => {
   const { state, dispatch } = useContext(appContext)
   const classes = useStyles();
-  let { min, max } = props.field
+  let { min, max } = props;
   return (
     <form className={classes.container} noValidate>
       <TextField
@@ -53,10 +63,11 @@ const SetFilter = props => {}
 export default () => {
   const { state, dispatch } = useContext(appContext)
   useEffect(() => {}, [state.filterDataSet])
+  const { filterDataSet } = state;
   return (
     <div>
       {getFilterFields(fieldConfiguration).map(field => (
-        <div>{field.label}</div>
+        <Filter label = {field.label} values= {(filterDataSet || {}) [field.key]} type={field.filterType}/>
       ))}
     </div>
   )
