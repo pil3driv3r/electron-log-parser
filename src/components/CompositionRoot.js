@@ -1,21 +1,23 @@
-import Grid from '@material-ui/core/Grid';
-import {makeStyles} from '@material-ui/core/styles';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import { styled } from '@mui/material/styles';
 import React from 'react';
 import FileBrowser from './FileBrowser';
 import FileHost from './FileHost';
 import FacetsHost from './FacetsHost';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow:1
-  }
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
 }));
 
-
 export default function CompositionRoot(props) {
-  const classes = useStyles();
   return(
-    <div className = {classes.root}>
+    <Box sx={{ flexGrow: 1 }}>
       <Grid container>
         <Grid item xs = {12}>
           <FileBrowser/>
@@ -27,6 +29,6 @@ export default function CompositionRoot(props) {
           <FileHost/>
         </Grid>
       </Grid>
-    </div>
+    </Box>
   )
 }                                    
