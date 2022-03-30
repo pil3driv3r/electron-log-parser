@@ -28,7 +28,10 @@ export default () => {
 
   useEffect(() => {
     if (state.filePath) {
-      if (state.fileData) {
+      if(state.filteredData) {
+        setParsedResult(JSON.stringify({ data: state.filteredData }, undefined, 2))
+      }
+      else if (state.fileData) {
         setParsedResult(JSON.stringify({ data: state.fileData }, undefined, 2))
       } else {
         setParsedResult('Loading file...')
@@ -36,7 +39,7 @@ export default () => {
     } else {
       setParsedResult('Please select a log file')
     }
-  }, [state.filePath, state.fileData])
+  }, [state.filePath, state.fileData, state.filteredData])
 
   return <pre>{parsedResult}</pre>
 }

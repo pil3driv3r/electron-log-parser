@@ -74,6 +74,34 @@ const buildFiltersForChunk = (
   return filterDataSet;
 };
 
+export const applyFiltersToDataSet = (
+  chunkedData, 
+  filters,
+  filterConfiguration = defaultConfiguration
+  ) => {
+  return chunkedData.filter(chunk => {
+    return filters.every(filter => applyFilterToChunk(chunk, filter));
+  });
+}
+
+const applyFiltersToChunk = (
+  chunk,
+  filter,
+  filterConfiguration = defaultConfiguration
+) => {
+  switch(filter.type) {
+    case FilterTypes.DATE: {
+      //perform date comparison
+    }
+    case FilterTypes.SET: {
+
+    }
+    case FilterTypes.STRING: {
+
+    }
+  }
+}
+
 const FilterTypes = {
   STRING: "string",
   DATE: "date",
