@@ -20,10 +20,13 @@ export const reducer = (state = initialState, action) => {
     }
     case ACTIONS.FILTER_ADDED: {
       if(payload && state.fileData && state.fileData.length > 0) {
-        let filters = addOrUpdateFilters(payload);
+        let filters = addOrUpdateFilters(state.filters, payload);
         let filteredData = applyFiltersToDataSet(state.fileData, filters);
         return {...state, filters, filteredData };
       }
+    }
+    case ACTIONS.FILTER_REMOVED: {
+      return state;
     }
     default: {
       return state;
@@ -32,9 +35,10 @@ export const reducer = (state = initialState, action) => {
 };
 
 const addOrUpdateFilters = (filters, newFilter) => {
+  console.log(filters);
   let updatedFilters = filters.slice();
   let matchedFilterIndex = updatedFilters.findIndex(item => item.id === newFilter.id);
-  if(!selectedFilter) {
+  if(matchedFilterIndex == -1) {
     updatedFilters.push(newFilter);;
   } else {
     updatedFilters[matchedFilterIndex] = newFilter;
@@ -45,7 +49,8 @@ const addOrUpdateFilters = (filters, newFilter) => {
 export const ACTIONS = {
   FILE_OPEN: 'file_open',
   FILE_READ_COMPLETED: 'file_read_completed',
-  FILTER_ADDED: 'filter_added'
+  FILTER_ADDED: 'filter_added',
+  FILTER_REMOVED: 'filter_removed'
 };
 
 export const appContext = React.createContext('app');

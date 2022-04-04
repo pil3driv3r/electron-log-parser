@@ -7,12 +7,10 @@ import { compareDesc } from 'date-fns';
 
 const DateTimeFilter = props => {
 
-    let {values, type, filterKey} = props;
-
-    let { min, max } = values || {};
+    let {filterValues, type, filterKey} = props;
+    let { min, max } = filterValues || {};
 
     const { dispatch } = useContext(appContext)
-
     const [lowerBoundDate, setLowerBoundDate] = useState(min);
     const [upperBoundDate, setupperBoundDate] = useState(max);
     const [filterStart, setFilterStart] = useState(null);

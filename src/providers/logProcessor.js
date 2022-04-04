@@ -1,5 +1,5 @@
 import { defaultConfiguration } from "../configurations/fieldConfiguration.json";
-import { parse, compareDesc, compareAsc } from "date-fns";
+import { parse, compareDesc, compareAsc, isWithinInterval, format } from "date-fns";
 
 export const processFileAsChunks = (
   fileContent,
@@ -12,17 +12,18 @@ export const processFileAsChunks = (
   chunks.forEach((chunk) => {
     try {
       let parsedChunk = JSON.parse(chunk);
-      filterDataSet = buildFiltersForChunk(
+      let result = buildFiltersForChunk(
         parsedChunk,
         filterConfiguration,
-        filterDataSet
+        filterDataSet,
+        formattedChunks,
       );
-      formattedChunks.push(parsedChunk);
+      filterDataSet = result.filterDataSet;
+      formattedChunks = result.formattedChunks;
     } catch (ex) {
       return chunk;
     }
   });
-  console.log(filterDataSet);
   return {
     chunkedData: formattedChunks.slice(0, formattedChunks.length - 1),
     filterDataSet,
@@ -32,13 +33,15 @@ export const processFileAsChunks = (
 const buildFiltersForChunk = (
   chunk,
   filterConfiguration,
-  filterDataSet = {}
+  filterDataSet = {},
+  formattedChunks = []
 ) => {
   try {
+    let clonedChunk = {...chunk};
     filterConfiguration.forEach(
-      ({ key, alias, filterType, allowFiltering }) => {
+      ({ key, alias, filterType, allowFiltering, format }) => {
         if (!chunk.hasOwnProperty(key) && chunk.hasOwnProperty(alias))
-          key = alias;
+        key = alias;
         if (allowFiltering) {
           switch (filterType) {
             case FilterTypes.SET: {
@@ -49,8 +52,8 @@ const buildFiltersForChunk = (
               break;
             }
             case FilterTypes.DATE: {
-              let formatString = "yyyy-MM-dd HH:mm:ss,SSS"; //"2020-08-30 00:03:30,321";
-              let parsedDate = parse(chunk[key], formatString, new Date());
+              let parsedDate = parse(chunk[key], format, new Date());
+              clonedChunk[key] = parsedDate;
               if (!filterDataSet[key]) {
                 filterDataSet[key] = {};
                 filterDataSet[key].min = parsedDate;
@@ -66,39 +69,49 @@ const buildFiltersForChunk = (
             }
           }
         }
+        formattedChunks.push(clonedChunk);
       }
     );
   } catch (ex) {
     console.log(ex);
   }
-  return filterDataSet;
+  return {filterDataSet, formattedChunks};
 };
 
 export const applyFiltersToDataSet = (
-  chunkedData, 
+  chunkedData,
   filters,
   filterConfiguration = defaultConfiguration
-  ) => {
+) => {
   return chunkedData.filter(chunk => {
-    return filters.every(filter => applyFilterToChunk(chunk, filter));
+    return filters.every(filter => 
+      applyFilterToChunk(
+        chunk, 
+        filter, 
+        filterConfiguration.find(config => config.key === filter.field)));
   });
 }
 
-const applyFiltersToChunk = (
+const applyFilterToChunk = (
   chunk,
   filter,
-  filterConfiguration = defaultConfiguration
+  config
 ) => {
-  switch(filter.type) {
+
+  const { value, field, type } = filter;
+  switch (type) {
     case FilterTypes.DATE: {
-      //perform date comparison
+      const [start, end] = value;
+      return (isWithinInterval(chunk[field], {start, end}));
     }
     case FilterTypes.SET: {
-
+      return value && value.length ? value.includes(chunk[field]) : true;
     }
     case FilterTypes.STRING: {
-
+      return chunk[field].search(value) >= 0;
     }
+    default:
+      return false;
   }
 }
 

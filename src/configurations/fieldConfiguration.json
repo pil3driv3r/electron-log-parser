@@ -7,7 +7,9 @@
       "dataType": "date",
       "filterType": "date",
       "enableVisualizer":false,
-      "allowFiltering": true
+      "allowFiltering": true,
+      "format":"yyyy-MM-dd HH:mm:ss,SSS",
+      "indexed": true
     },
     {
       "key": "message",
